@@ -46,7 +46,7 @@ const loginUser = asyncHandler(async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1m" }
+      { expiresIn: "60m" }
     );
     res.status(200).json({
       message: "Login successfully",
@@ -63,7 +63,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const currentUser = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: "current user info" });
+  res.status(200).json({ message: "current user info", data: req.user });
 });
 
 export { registerUser, loginUser, currentUser };

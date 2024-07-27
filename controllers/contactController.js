@@ -8,9 +8,13 @@ const getContacts = asyncHandler(async (req, res) => {
       res.status(404);
       throw new Error("Contact not found!!!");
     }
+    if (contact.user_id.toString() !== req.user.id) {
+      res.status(403);
+      throw new Error("User Dont have permission to view this contact!!!");
+    }
     res.status(200).json({ message: "Welcome Contact app", data: contact });
   } else {
-    const contacts = await Contacts.find();
+    const contacts = await Contacts.find({ user_id: req.user.id });
     res.status(200).json({ message: "Welcome Contact app", data: contacts });
   }
 });
@@ -29,6 +33,7 @@ const createContact = asyncHandler(async (req, res) => {
     throw new Error("Contact Already Exists!!!");
   } else {
     const contact = await Contacts.create({
+      user_id: req.user.id,
       name,
       email,
       number,
@@ -45,6 +50,12 @@ const deleteContact = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Contact not found!!!");
   }
+
+  if (contact.user_id.toString() !== req.user.id) {
+    res.status(403);
+    throw new Error("User Don't have permission to delete this contact!!!");
+  }
+
   await Contacts.findByIdAndDelete(req.params.id);
   res.status(200).json({ message: "Contact Deleted" });
 });
@@ -55,6 +66,12 @@ const updateContact = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Contact not found!!!");
   }
+
+  if (contact.user_id.toString() !== req.user.id) {
+    res.status(403);
+    throw new Error("User Dont have permission to update this contact!!!");
+  }
+
   const updatedContact = await Contacts.findByIdAndUpdate(
     req.params.id,
     req.body,
