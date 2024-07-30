@@ -1,6 +1,25 @@
 import asyncHandler from "express-async-handler";
 import Contacts from "../models/contactModal.js";
 
+const getContactsByIds = asyncHandler(async (req, res) => {
+  const { contactList } = req.body;
+  if (contactList.length === 0) {
+    res.status(400);
+    throw new Error("Id is required!!!");
+  }
+  const query = {
+    _id: { $in: contactList },
+    user_id: { $in: req.user.id },
+  };
+  const contacts = await Contacts.find(query);
+  if (contacts.length === 0) {
+    res
+      .status(200)
+      .json({ message: "No Contacts Found with these Id", data: contacts });
+  }
+  res.status(200).json({ message: "Welcome Contact app", data: contacts });
+});
+
 const getContacts = asyncHandler(async (req, res) => {
   if (req.params.id) {
     const contact = await Contacts.findById(req.params.id);
@@ -80,4 +99,10 @@ const updateContact = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Contact Updated", data: updatedContact });
 });
 
-export { getContacts, createContact, deleteContact, updateContact };
+export {
+  getContacts,
+  createContact,
+  deleteContact,
+  updateContact,
+  getContactsByIds,
+};
