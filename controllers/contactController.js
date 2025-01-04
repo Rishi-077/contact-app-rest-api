@@ -44,9 +44,11 @@ const createContact = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("All Field is required!!!");
   }
-  const contacts = await Contacts.findOne({
+  const query = {
+    user_id: req.user.id,
     $or: [{ email }, { number }],
-  });
+  };
+  const contacts = await Contacts.findOne(query);
   if (contacts) {
     res.status(400);
     throw new Error("Contact Already Exists!!!");

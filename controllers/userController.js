@@ -1,6 +1,5 @@
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
-import userModal from "../models/userModal.js";
 import User from "../models/userModal.js";
 import jwt from "jsonwebtoken";
 
